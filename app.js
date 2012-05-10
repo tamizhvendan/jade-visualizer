@@ -5,14 +5,14 @@ var http = require('http'),
 	port = process.env.PORT || 2222,
 	server = {},
 	io = {};
-	
-var parseJadeText = function(jadeTemplate) {	
+
+var parseJadeText = function (jadeTemplate) {
 	console.log(jadeTemplate);
 	return jade.compile(jadeTemplate)();
 };
 
-server = http.createServer( function (req, res) {
-	staticFileProvider.serveFile(req, res);	
+server = http.createServer(function (req, res) {
+	staticFileProvider.serveFile(req, res);
 });
 
 server.listen(port);
