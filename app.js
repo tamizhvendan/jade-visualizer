@@ -1,18 +1,10 @@
 var http = require('http'),
-	jade = require('jade'),
 	socketIO = require('socket.io'),    
 	staticFileProvider = require('./lib/staticFileProvider'),
+    jade2html = require('./lib/jade2html'),
 	port = process.env.PORT || 2222,
 	server = {},
 	io = {};
-
-var parseJadeText = function (jadeTemplate) {
-    var os = require('os'),
-        eol = os.platform() === 'win32' ? '\r\n' : '\n',
-        jadeTemplateWithEol = jadeTemplate.join(eol);
-
-    return jade.compile(jadeTemplateWithEol, { pretty : true })();
-};
 
 server = http.createServer(function (req, res) {
 	staticFileProvider.serveFile(req, res);
@@ -25,9 +17,18 @@ io = socketIO.listen(server);
 
 io.sockets.on('connection', function (socket) {
     
+    function translateJadeToHtml(jadeTemplate) {
+        jade2html.translate(jadeTemplate, function onJadeTranslation(err, html) {
+            if ( err ) { 
+                socket.emit('error', err); 
+            } else {
+                socket.emit('output', html);
+            }
+        });
+    }
+
     socket.on('translate', function (jadeTemplate) {
-        var parsedText = parseJadeText(jadeTemplate);
-        socket.emit('output', parsedText);
+        translateJadeToHtml(jadeTemplate);
     });
 
 });
