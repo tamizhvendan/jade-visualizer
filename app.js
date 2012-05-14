@@ -15,6 +15,12 @@ console.log('Jade-Visualizer is listening @ Port : ' + port);
 
 io = socketIO.listen(server);
 
+// Configuration to support socket.io on Heroku
+io.configure(function(){
+    io.set("transports", ["xhr-polling"]);
+    io.set("polling duration", 10);
+});
+
 io.sockets.on('connection', function (socket) {
     
     function translateJadeToHtml(jadeData) {
