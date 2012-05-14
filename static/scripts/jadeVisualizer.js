@@ -1,43 +1,55 @@
 $(function () {
     var $output = $('#output'),
 		$translate = $('#translate'),
-		$jadeTemplate = $('#jadeTemplate'),
+		jadeTemplate = {},
+        data = {},
         $alert = $('.alert'),
         $alertHeader = $('.alert-heading'),
         $errorMsg = $('#errorMsg'),
         $alertClose = $('.close'),
-		socket = io.connect(),
-        tabKeyCode = 9;
+		socket = io.connect();
 
     (function init() {
-        $jadeTemplate.val('p.jade Hello World!!');
-        $alert.hide();
+        jadeTemplate  = CodeMirror.fromTextArea( document.getElementById('jadeTemplate'), {
+            theme : 'eclipse'
+        });
+        
+        data = CodeMirror.fromTextArea( document.getElementById('data'), {
+            theme : 'eclipse',
+            mode : { name : 'javascript', json : true },
+            indentUnit : 4,
+            matchBrackets : true,
+            autoClearEmptyLines : true
+        });
+        
+        jadeTemplate.setValue('p.jade #{helloWorld}');
+        data.setValue('{"helloWorld" : "Hello World!!"}');
+        data.refresh();
         $output.text('<p class="jade">Hello World!!</p>');    
         prettyPrint();
+        $('.CodeMirror').css('border', '1px solid #0d0d0d');
+        
     })();
 
     $alertClose.on('click', function () {
         $alert.fadeOut();
     });
 
-    function handleTabKeyPress(event) {
-        var jadeText = $jadeTemplate.val();
-        jadeText += '\t';
-        $jadeTemplate.val(jadeText);
-        event.preventDefault();
-    }
-
-    $jadeTemplate.on('keydown', function (event) {
-        if (event.keyCode === tabKeyCode) {
-            handleTabKeyPress(event);
-        }
-    });
-
     $translate.on('click', function (event) {
+        var jadeText = "", jadeData = {};
+
         event.preventDefault();
         $alert.fadeOut();
-        var jadeText = $jadeTemplate.val().split('\n');
-        socket.emit('translate', jadeText);
+        
+        jadeText = jadeTemplate.getValue().split('\n');
+        
+        try {
+            jadeData = JSON.parse(data.getValue() || "{}");  
+        } catch ( err ) {
+            showError('Oops, Something wrong with the data', err, data );
+            return;
+        }
+        socket.emit('translate', { jadeTemplate : jadeText , locals : jadeData});
     });
 
     socket.on('output', function (translatedText) {
@@ -45,10 +57,14 @@ $(function () {
         prettyPrint();
     });
 
-    socket.on('error', function (error) {
-        $alertHeader.text('Oops! Something wrong with the template');
-        $errorMsg.text(error);
+    function showError(errorHeader, errorMsg, elementToFocus) {
+        $alertHeader.text(errorHeader);
+        $errorMsg.text(errorMsg);
         $alert.fadeIn();
-        $jadeTemplate.focus();
+        elementToFocus.focus();
+    }
+
+    socket.on('error', function (errorMsg) {
+        showError('Oops! Something wrong with the template', errorMsg, jadeTemplate);
     });
 });

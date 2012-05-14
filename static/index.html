@@ -8,12 +8,21 @@
     <meta name="author" content="">
     <!-- Le styles -->
     <link href="/bootstrap/css/bootstrap.css" rel="stylesheet">
+    <link href='/CodeMirror/codemirror.css' rel='stylesheet'>
+    <link href='/CodeMirror/eclipse.css' rel='stylesheet'>
     <link href="/stylesheets/prettify.css" rel="stylesheet">
     <style type="text/css">
         tstrap.css body
         {
             padding-top: 60px;
             padding-bottom: 40px;
+        }
+        .CodeMirror-scroll {
+            min-height : 150px;
+            height: auto;
+            overflow-y: hidden;
+            overflow-x: auto;
+            width: 100%;
         }
     </style>
     <link href="/bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
@@ -27,23 +36,33 @@
         <div class="navbar-inner">
             <div class="container">
                 <a class="brand" href="#">Jade - Visualizer</a>
-                <!--<div class="nav-collapse">
+                <div class="nav-collapse">
                     <ul class="nav">
                         <li class="active"><a href="#">Home</a></li>
-                        <li><a href="#about">About</a></li>
-                        <li><a href="#contact">Contact</a></li>
+                        <li><a href="https://github.com/visionmedia/jade">What is Jade ?</a></li>
+                        <li><a href="https://github.com/tamizhvendan/jade-visualizer">Source Code</a></li>
+                        <li><a href="http://sweettam.blogspot.com">Author's Blog</a></li>
                     </ul>
-                </div>-->
+                </div>
             </div>
         </div>
     <hr>
     <div class="container">
+        <div class='row'>
+            <div class="row alert alert-block alert-error" style="display:none">
+                <a class="close" data-dismiss='alert' href='#'>x</a>
+                <h4 class='alert-heading'></h4>
+                <span id=errorMsg></span>
+            </div>
+        </div>
         <div class="row">
             <div class="span5">
                 <h3>
                     Jade Template
                 </h3>
                 <textarea rows='11' cols='60' id='jadeTemplate' class='span5'> </textarea>
+                <h3> Data </h3>
+                <textarea rows='11' cols='60' id='data' class='span5'></textarea>
             </div>
             <div class="span2">
                 <div class='row'> <p> &nbsp;</p> </div>
@@ -56,23 +75,17 @@
             </div>
             <div class="span5">
                 <h3>Translated Html</h3>
-                <pre id='output' class='prettyprint' style='min-height:200px'>
-[Enter some jade template to view the html here]
+                <pre id='output' class='prettyprint' style='min-height:300px'>
                 </pre>
             </div>
         </div>
-        <div class="row alert alert-block alert-error">
-            <a class="close" data-dismiss='alert' href='#'>x</a>
-            <h4 class='alert-heading'></h4>
-            <span id=errorMsg></span>
-        </div>
         <hr>
         <footer>
-            <p>
-                Author : Tamizhvendan S</p>
+            <p>Author : Tamizhvendan S, email : tamizh88@gmail.com</p>
         </footer>
     </div>
     <script src='/scripts/jquery-1.7.2.min.js'> </script>
+    <script src='/CodeMirror/codemirror.js'> </script>
     <script src='/scripts/prettify.js'> </script>
     <script src='/socket.io/socket.io.js'> </script>    
     <script src='/scripts/jadeVisualizer.js'> </script>

@@ -17,18 +17,20 @@ io = socketIO.listen(server);
 
 io.sockets.on('connection', function (socket) {
     
-    function translateJadeToHtml(jadeTemplate) {
-        jade2html.translate(jadeTemplate, function onJadeTranslation(err, html) {
+    function translateJadeToHtml(jadeData) {
+
+        jade2html.translate(jadeData, function (err, html) {
             if ( err ) { 
                 socket.emit('error', err); 
             } else {
                 socket.emit('output', html);
             }
         });
+   
     }
 
-    socket.on('translate', function (jadeTemplate) {
-        translateJadeToHtml(jadeTemplate);
+    socket.on('translate', function (jadeData) {
+        translateJadeToHtml(jadeData);
     });
 
 });
