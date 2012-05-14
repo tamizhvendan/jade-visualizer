@@ -37,7 +37,7 @@ $(function () {
 
     $translate.on('click', function (event) {
         var jadeText = "", jadeData = {};
-
+        $output.text('Translation in progress ...');
         event.preventDefault();
         $alert.fadeOut();
         
@@ -59,6 +59,7 @@ $(function () {
 
     function showError(errorHeader, errorMsg, elementToFocus) {
         $alertHeader.text(errorHeader);
+        $output.text('');
         $errorMsg.text(errorMsg);
         $alert.fadeIn();
         elementToFocus.focus();
